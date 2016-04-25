@@ -1,0 +1,41 @@
+﻿
+@model List<Prisjakt.Models.ProductModel>
+
+@{
+    ViewBag.Title = "Prisjakt-erbjudanden";
+}
+
+<script type="text/javascript">
+    var newList = [];
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <h2 style="margin-bottom:20px;">Billigast på Prisjakt just nu...</h2>
+
+        <table class="table table-hover">
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td><a href="@p.Url" target="_blank"><img class="image-size" src=@p.ImageUrl.Replace("/35/","/140/") alt="@p.Name"></a></td>
+                        <td><a href="@p.Url" target="_blank">@p.Name</a><sup><span class="isNew" id="@p.Id"></span></sup><br><blockquote>@p.Category</blockquote></td>
+                        <td class="nobr"><a href="@p.Url" target="_blank">@p.PriceDrop %</a></td>
+                        <td class="nobr"><a href="@p.Url" target="_blank">@p.Price :-</a></td>
+                        <td><script type="text/javascript">
+                            @*var product = {
+                                    Id: @p.Id,
+                                    Name: '@p.Name',
+                                    IsNew: '@p.IsNew'
+                                };
+                                newList.push(product);*@
+
+                                newList.push(@p.Id);
+                            </script></td>
+                    </tr>
+                    
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
