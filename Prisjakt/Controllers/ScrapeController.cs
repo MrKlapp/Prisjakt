@@ -88,11 +88,11 @@ namespace Prisjakt.Controllers
                 doc.LoadHtml(html);
 
                 var allStores = doc.DocumentNode.SelectNodes(".//table[@id=\"prislista\"]//tbody//tr");
-                if (allStores.Count() < 2) return null;
+				if (allStores == null || allStores.Count() < 2) return null;
 
 
 
-                var firstStoreIsInStock = doc.DocumentNode.SelectSingleNode(".//table[@id=\"prislista\"]//tbody//tr//td[7]//span[1]");
+				var firstStoreIsInStock = doc.DocumentNode.SelectSingleNode(".//table[@id=\"prislista\"]//tbody//tr//td[7]//span[1]");
                 if (firstStoreIsInStock != null && firstStoreIsInStock.InnerHtml.Contains("icon-green"))
                     return product;
                 return null;

@@ -15,6 +15,11 @@
     font-weight: bold;
 }
 
+.lastUpdated {
+    font-size: 0.7em;
+    opacity: 60;
+}
+
 .nobr {
     white-space: nowrap;
 }
