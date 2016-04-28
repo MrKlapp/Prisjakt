@@ -5,37 +5,44 @@
     ViewBag.Title = "Prisjakt-erbjudanden";
 }
 
+<script id="template" type="x-tmpl-mustache">
+    {{#products}}
+    <tr id="tr{{Id}}">
+        <td><a href="{{Url}}" target="_blank"><img class="image-size" src="{{ImageUrl}}" alt="{{Name}}"></a></td>
+        <td><a href="{{Url}}" target="_blank">{{Name}}</a><sup><span class="isNew" id="p<%= p.Id[i] %>"></span></sup><br><blockquote>{{Category}}<br /><span class="lastUpdated">({{LastUpdated}})</span></blockquote></td>
+        <td class="nobr"><a href="{{Url}}" target="_blank">{{PriceDrop}} %</a></td>
+        <td class="nobr"><a href="{{Url}}" target="_blank">{{Price}} :-</a></td>
+        <td></td>
+    </tr>
+    {{/products}}
+</script>
+
 <script type="text/javascript">
     var prodList = [];
+    
+    function GetData() {
+        $.getJSON("/Home/GetProducts", function(data) {
+
+            var productList = { products: data };
+            console.log(productList);
+
+            var template = $('#template').html();
+            Mustache.parse(template); // optional, speeds up future uses
+            var rendered = Mustache.render(template, productList);
+            $('#productTableBody').html(rendered);
+
+        });
+    };
+
+    GetData();
+
 </script>
 <div class="row">
     <div class="col-md-12">
         <h2 style="margin-bottom:20px;">Billigast på Prisjakt just nu...</h2>
 
         <table class="table table-hover">
-            <tbody>
-                @foreach (var p in Model)
-                {
-                    <tr id="@("tr" + p.Id)">
-                        <td><a href="@p.Url" target="_blank"><img class="image-size" src=@p.ImageUrl.Replace("/35/","/140/") alt="@p.Name"></a></td>
-                        <td><a href="@p.Url" target="_blank">@p.Name</a><sup><span class="isNew" id="@("p" + p.Id)"></span></sup><br><blockquote>@p.Category<br/><span class="lastUpdated">(@p.LastUpdated)</span></blockquote></td>
-                        <td class="nobr"><a href="@p.Url" target="_blank">@p.PriceDrop %</a></td>
-                        <td class="nobr"><a href="@p.Url" target="_blank">@p.Price :-</a></td>
-                        <td><script type="text/javascript">
-                            @*var product = {
-                                    Id: @p.Id,
-                                    Name: '@p.Name',
-                                    IsNew: '@p.IsNew'
-                                };
-                                newList.push(product);*@
-
-                            prodList.push(@p.Id);
-                            </script></td>
-                    </tr>
-                    
-                }
-            </tbody>
+            <tbody id="productTableBody"></tbody>
         </table>
     </div>
 </div>
-

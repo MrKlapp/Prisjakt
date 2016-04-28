@@ -27,10 +27,11 @@ for (var i = 0; i < prodList.length; i++) {
 
 /*** Firebase - stuff ***/
 var dataRef = new Firebase("https://incandescent-fire-339.firebaseio.com/Product"); // Get a reference to the root of the chat data.
+
 dataRef.on("child_added", function (snapshot) {
     var newProduct = snapshot.val().product;
     Notify(newProduct);
-    //todo, insert into page directly? (need a html-template to render)
+    GetData();
 });
 
 

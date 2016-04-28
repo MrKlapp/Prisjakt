@@ -85,7 +85,7 @@ namespace Prisjakt.Controllers
 						var product = new ProductModel
 							{
 								LastUpdated = DateTime.Now,
-								ImageUrl = node.SelectSingleNode(".//td[@class='img-cont']//img").Attributes["src"].Value,
+								ImageUrl = node.SelectSingleNode(".//td[@class='img-cont']//img").Attributes["src"].Value.Replace("/35/", "/140/"),
 								Price = int.Parse(node.SelectSingleNode(".//a[@class='price']").InnerText.Replace("&nbsp;", "").Replace(":-", "")),
 								Url = string.Concat(host, node.SelectSingleNode(".//a[@class='price']").Attributes["href"].Value.Replace("&nbsp;", "").Replace(":-", "")),
 								Name = HttpUtility.HtmlDecode(node.SelectSingleNode(".//td[5]//a").InnerText),
