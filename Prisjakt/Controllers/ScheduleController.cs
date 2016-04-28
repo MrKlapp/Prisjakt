@@ -15,9 +15,9 @@ namespace Prisjakt.Controllers
                 Task.Run(() => {
                     var link = ConfigurationManager.AppSettings["urlBestPrices"];
                     var scrapeController = new ScrapeController();
-                    scrapeController.GetFilteredProducts(link, false);
+                    scrapeController.GetFilteredProducts(link, false, true);
                 });
-			}).ToRunNow().AndEvery(10).Minutes();
+			}).ToRunNow().AndEvery(1).Minutes();
 
 		}
 	}

@@ -6,7 +6,7 @@
 }
 
 <script type="text/javascript">
-    var newList = [];
+    var prodList = [];
 </script>
 <div class="row">
     <div class="col-md-12">
@@ -16,9 +16,9 @@
             <tbody>
                 @foreach (var p in Model)
                 {
-                    <tr>
+                    <tr id="@("tr" + p.Id)">
                         <td><a href="@p.Url" target="_blank"><img class="image-size" src=@p.ImageUrl.Replace("/35/","/140/") alt="@p.Name"></a></td>
-                        <td><a href="@p.Url" target="_blank">@p.Name</a><sup><span class="isNew" id="@p.Id"></span></sup><br><blockquote>@p.Category<br/><span class="lastUpdated">(@p.LastUpdated)</span></blockquote></td>
+                        <td><a href="@p.Url" target="_blank">@p.Name</a><sup><span class="isNew" id="@("p" + p.Id)"></span></sup><br><blockquote>@p.Category<br/><span class="lastUpdated">(@p.LastUpdated)</span></blockquote></td>
                         <td class="nobr"><a href="@p.Url" target="_blank">@p.PriceDrop %</a></td>
                         <td class="nobr"><a href="@p.Url" target="_blank">@p.Price :-</a></td>
                         <td><script type="text/javascript">
@@ -29,7 +29,7 @@
                                 };
                                 newList.push(product);*@
 
-                                newList.push(@p.Id);
+                            prodList.push(@p.Id);
                             </script></td>
                     </tr>
                     

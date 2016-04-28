@@ -1,51 +1,43 @@
 ﻿
 
-var oldList = localStorage.getItem("productList");
-
-if (oldList != null && oldList.length > 0) {
-    for (var i = 0; i < newList.length; i++) {
-        if (oldList.indexOf(newList[i]) < 0) {
-            $("#" + newList[i]).html("Ny!");
-           // notify(newList[i].Name);
+for (var i = 0; i < prodList.length; i++) {
+    var now = new Date();
+    var dateTimeFiveMinAgo = new Date(now.getTime() - (5 * 60000));
+    var dateTimeFiveHourAgo = new Date(now.getTime() - (5 * 60 * 60000));
+    
+    try {
+        var createdDateTime = new Date(localStorage.getItem("p" + prodList[i]));
+        if (localStorage.getItem("p" + prodList[i]) != null && (dateTimeFiveMinAgo > createdDateTime)) { //old prod
+            //$("#tr" + prodList[i]).hide(); //todo, this should toggle?
+        } else {
+            $("#p" + prodList[i]).html("Ny!");
         }
+
+        if (localStorage.getItem("p" + prodList[i]) == null) {
+            localStorage.setItem("p" + prodList[i], new Date());
+            $("#p" + prodList[i]).html("Ny!");
+        }
+
+
+    } catch (e) {
+        console.log(e);
     }
 }
 
-localStorage.setItem("productList", newList);
 
-
-//function IsNew(id) {
-
-//    if (oldList.indexOf(id) < 0) {
-//        $("#" + id).html("Ny!");
-//        setTimeout(function () { $("#" + id); }, 60000);
-//    }
-
-
-//}
-
-//checkForNewProducts();
-
-function checkForNewProducts() {
-    for (var i = 0; i < newList.length; i++) {
-        console.log(newList[i].IsNew);
-        if (newList[i].IsNew = 'True') {
-           // notify(newList[i].Name);
-        }
-    }
-    setTimeout(function () {
-        checkForNewProducts();
-    }, 5000);
-}
-
-
-// request permission on page load
-document.addEventListener('DOMContentLoaded', function () {
-    if (Notification.permission !== "granted")
-        Notification.requestPermission();
+/*** Firebase - stuff ***/
+var dataRef = new Firebase("https://incandescent-fire-339.firebaseio.com/Product"); // Get a reference to the root of the chat data.
+dataRef.on("child_added", function (snapshot) {
+    var newProduct = snapshot.val().product;
+    Notify(newProduct);
+    //todo, insert into page directly? (need a html-template to render)
 });
 
-function notify(productName) {
+
+
+
+/*** Notifications - stuff ***/
+function Notify(product) {
     if (!Notification) {
         alert('Desktop notifications not available in your browser. Try Chromium.');
         return;
@@ -54,9 +46,9 @@ function notify(productName) {
     if (Notification.permission !== "granted")
         Notification.requestPermission();
     else {
-        var notification = new Notification('Ny produkt med bra pris!', {
-            icon: '/images/logo-text-prisjakt.png.ico',
-            body: productName,
+        var notification = new Notification(product.Name, {
+            icon: product.ImageUrl,
+            body: product.Name + ' ' + product.Price + ':- (' + product.PriceDrop + '%)',
         });
 
         notification.onclick = function () {
@@ -66,3 +58,11 @@ function notify(productName) {
     }
 
 }
+
+
+// request permission on page load
+document.addEventListener('DOMContentLoaded', function () {
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+});
+
