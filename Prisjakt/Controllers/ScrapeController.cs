@@ -15,6 +15,19 @@ namespace Prisjakt.Controllers
 	public class ScrapeController : ApiController
 	{
 		private readonly CacheController _cache = new CacheController();
+
+		IFirebaseConfig config = new FirebaseConfig
+		{
+			AuthSecret = "Alu07HnXdaBTn2A9HbDdqit2ZRu1WTKgrk1uSqvL",
+			BasePath = "https://incandescent-fire-339.firebaseio.com/"
+		};
+
+		public void AddProduct(ProductModel product)
+		{
+			IFirebaseClient client = new FirebaseClient(config);
+			client.PushAsync("Products", product);
+		}
+
 		public List<ProductModel> GetFilteredProducts(string link, bool useCache, bool notify)
 		{
 			const string cacheKey = "getFilteredProducts";
@@ -24,13 +37,8 @@ namespace Prisjakt.Controllers
 				return (List<ProductModel>)cachedObj;
 			}
 
-			IFirebaseConfig config = new FirebaseConfig
-			{
-				AuthSecret = "Alu07HnXdaBTn2A9HbDdqit2ZRu1WTKgrk1uSqvL",
-				BasePath = "https://incandescent-fire-339.firebaseio.com/"
-			};
 			IFirebaseClient client = new FirebaseClient(config);
-			client.Delete("Product"); //Deletes all old items, otherwise they will popup
+			client.Delete("Products"); //Deletes all old items, otherwise they will popup
 
 			const string cacheKeyOldProducts = "getFilteredProductsOldList";
 			var cachedObjOldList = (List<ProductModel>)_cache.Get(cacheKeyOldProducts);
@@ -50,7 +58,7 @@ namespace Prisjakt.Controllers
 					{
 						product.IsNew = true;
 						if (notify)
-							client.PushAsync("Product", new { product });
+							client.PushAsync("Products", product);
 					}
 				}
 
@@ -58,13 +66,13 @@ namespace Prisjakt.Controllers
 					filteredProducts.Add(product);
 
 			}
-			_cache.Put(cacheKey, filteredProducts, new TimeSpan(0, 15, 0));
-			_cache.Put(cacheKeyOldProducts, filteredProducts, new TimeSpan(2, 0, 0));
+			_cache.Put(cacheKey, filteredProducts, new TimeSpan(0, 5, 0));
+			_cache.Put(cacheKeyOldProducts, filteredProducts, new TimeSpan(0, 6, 0));
 
 			return filteredProducts;
 		}
 
-		public static IEnumerable<ProductModel> ScanProducts(string link)
+		private static IEnumerable<ProductModel> ScanProducts(string link)
 		{
 			const string host = "http://www.prisjakt.se";
 
@@ -104,7 +112,7 @@ namespace Prisjakt.Controllers
 			}
 		}
 
-		public static ProductModel IsProductInStock(ProductModel product)
+		private static ProductModel IsProductInStock(ProductModel product)
 		{
 			using (var wc = new WebClient())
 			{
@@ -115,8 +123,6 @@ namespace Prisjakt.Controllers
 
 				var allStores = doc.DocumentNode.SelectNodes(".//table[@id=\"prislista\"]//tbody//tr");
 				if (allStores == null || allStores.Count() < 2) return null;
-
-
 
 				var firstStoreIsInStock = doc.DocumentNode.SelectSingleNode(".//table[@id=\"prislista\"]//tbody//tr//td[7]//span[1]");
 				if (firstStoreIsInStock != null && firstStoreIsInStock.InnerHtml.Contains("icon-green"))

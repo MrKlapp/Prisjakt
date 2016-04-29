@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Web.Http;
 using System.Web.Mvc;
 using Prisjakt.Models;
 
@@ -8,27 +9,24 @@ namespace Prisjakt.Controllers
 {
 	public class HomeController : Controller
 	{
+		readonly ScrapeController _scrapeController = new ScrapeController();
 		readonly string _link = ConfigurationManager.AppSettings["urlBestPrices"];
+
 		public ActionResult Index()
 		{
-            var products = GetProducts(_link);
-
-			return View((List<ProductModel>)products);
+			return View();
 		}
-        
-	    private List<ProductModel> GetProducts(string link)
-	    {
-            var scrapeController = new ScrapeController();
-            var filteredProducts = scrapeController.GetFilteredProducts(link, true, false);
-	        return filteredProducts;
-	    }
 
 		public JsonResult GetProducts()
 		{
-			var link = ConfigurationManager.AppSettings["urlBestPrices"];
-			var scrapeController = new ScrapeController();
-			var filteredProducts = scrapeController.GetFilteredProducts(link, true, false);
+			var filteredProducts = _scrapeController.GetFilteredProducts(_link, true, false);
 			return Json(filteredProducts, JsonRequestBehavior.AllowGet);
+		}
+		
+		public void AddProduct(int id, string name, int price, int pricedrop, string imageUrl)
+		{
+			var product = new ProductModel() {Id = id, Name = name, PriceDrop = pricedrop, Price = price, ImageUrl = imageUrl, Category = "", IsNew = true, Url = "", LastUpdated = DateTime.Now};
+			_scrapeController.AddProduct(product);
 		}
 
 

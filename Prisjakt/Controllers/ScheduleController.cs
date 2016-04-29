@@ -10,15 +10,13 @@ namespace Prisjakt.Controllers
 		{
 			Schedule(() =>
 			{
-
-                //https://www.prowlapp.com/
-                Task.Run(() => {
-                    var link = ConfigurationManager.AppSettings["urlBestPrices"];
-                    var scrapeController = new ScrapeController();
-                    scrapeController.GetFilteredProducts(link, false, true);
-                });
-			}).ToRunNow().AndEvery(1).Minutes();
-
+				Task.Run(() =>
+				{
+					var link = ConfigurationManager.AppSettings["urlBestPrices"];
+					var scrapeController = new ScrapeController();
+					scrapeController.GetFilteredProducts(link, false, true);
+				});
+			}).ToRunNow().AndEvery(5).Minutes();
 		}
 	}
 }

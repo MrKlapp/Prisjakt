@@ -13,7 +13,7 @@ namespace Prisjakt.Models
 		public int PriceDrop { get; set; }
 		public string ImageUrl { get; set; }
 		public string Name { get; set; }
-        public string Category { get; set; }
+		public string Category { get; set; }
         public bool IsNew { get; set; }
         public DateTime LastUpdated { get; set; }
 	}
